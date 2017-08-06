@@ -13,3 +13,15 @@ path = os.path.join(BASE_DIR, 'My_devpos\\templates').replace('\\','/')
 
 print("BASE_DIR",BASE_DIR)
 print("path",path)
+
+
+    try:
+        req=requests.get(url,headers=header, timeout=10,proxies=proxy_ip,stream=True)
+        print("保存图片",url)
+        r=req.content
+        #print("req",req.text.encode(req.encoding).decode('utf-8'))
+        #print(soup)
+        with open(filename,'wb') as fd:
+            try:
+                fd.write(r)
+                print("保存成功")
