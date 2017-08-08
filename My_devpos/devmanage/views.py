@@ -12,22 +12,21 @@ from devmanage.pymysql_conn import delete_table, select_table, \
 
 
 #from My_devpos.devmanage.pymysql_conn.py import select_table, insert_table
-each_page=2
+each_page=3
 
 @login_required
 def ip_view(request):
     '''show ip list'''
-    #del ip
+    #del ip前台点击删除时发送的ip到后台,逐条删除
     if request.method =='POST':
         ip=request.POST.getlist('post_ip')
         for i in ip:
-            p=select_table('host',i)
+            #p=select_table('host',i)
             delete_table('host',i)
-
+    #然后查询整个表，显示所有数据
     ip_list=select_all('host')
     paginator=Paginator(ip_list,each_page)
     page=request.GET.get('page',1)
-
     try:
         show_list = paginator.page(page)
     except PageNotAnInteger:
@@ -36,18 +35,19 @@ def ip_view(request):
     except (EmptyPage,InvalidPage):
         # If page is out of range (e.g. 9999), deliver last page of results.
         show_list = paginator.page(paginator.num_pages)
-    return render_to_response('ip_manage.html',{'username':request.user.username,'show_list':show_list,'paginator':paginator})
+    return render_to_response('ip_manage.html',{'username':request.user.username,'show_list':show_list,'ip_list':ip_list,'paginator':paginator})
 
 @login_required
 def dev_view(request):
     '''show dev list'''
+    #如果是查询时
     if request.method =='POST':
         ip=request.POST.getlist('post_ip')
         for i in ip:
             p=select_table('device_status',i)
             delete_table('device_status', p)
 
-    #show  Paginator
+    #show  Paginator分页显示
     dev_list=select_all('device_status')
     paginator=Paginator(dev_list,each_page)
     page=request.GET.get('page',1)
@@ -72,12 +72,15 @@ def add_ip(request):
             return render_to_response('add_ip.html',{'username':request.user.username,'add_error':'IP已经存在!'})
         else:
             data={
-                'ipaddr':request.POST.get('ipaddr'),
+                'ip':request.POST.get('ipaddr'),
                 'hostname':request.POST.get('hostname'),
                 'ostype':request.POST.get('ostype'),
                 'ports':request.POST.get('ports'),
-                'application':request.POST.get('application')
+                'application':request.POST.get('application'),
+                'pwd':request.POST.get('application','root'),
+                'username':request.POST.get('application','root'),
                 }
+            print("data",data)
             insert_table('host', data)
 
 
@@ -167,6 +170,7 @@ def search_dev(request):
         return render_to_response('dev_manage.html',{'username':request.user.username,'show_list':show_list,'paginator':paginator,'s_text':s_text})
 
 @login_required
+#查看对应IP主机的详细信息，这里接收传自前台的IP地址
 def mod_ip(request):
     if 'ip' in request.GET:
         ip=request.GET.get('ip')
@@ -175,12 +179,13 @@ def mod_ip(request):
     if request.method =='POST':
         ip=request.GET.get('ip')
         data={
+            'ip':ip,
             'hostname':request.POST.get('hostname'),
             'ostype':request.POST.get('ostype'),
             'ports':request.POST.get('ports'),
             'application':request.POST.get('application'),
             }
-        update_table('host',ip)
+        update_table('host',data)
 
 
     return render_to_response('add_ip.html',{'username':request.user.username,'ip_info':ip_info})
@@ -191,11 +196,12 @@ def mod_ip(request):
 def mod_dev(request):
     if 'ip' in request.GET:
         ip=request.GET.get('ip')
-        ip_info=select_table('device_status', ip)
+        dev_info=select_table('device_status', ip)
 
     if request.method =='POST':
         ip=request.GET.get('ip')
         data={
+            'ip':ip,
             'cpu':request.POST.get('cpu'),
             'memory':request.POST.get('memory'),
             'location':request.POST.get('location'),
@@ -203,8 +209,8 @@ def mod_dev(request):
             'platform':request.POST.get('platform'),
             'sn':request.POST.get('sn'),
             }
-
-    return render_to_response('add_dev.html',{'username':request.user.username,'ip_info':ip_info})
+        update_table('device_status',data)
+    return render_to_response('add_dev.html',{'username':request.user.username,'dev_info':dev_info})
 
 
 

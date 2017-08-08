@@ -45,17 +45,18 @@
           {% if show_list %}
             {% for ip in show_list %}
             <tr>
-              <td><input type="checkbox" class="checkbox" name="post_ip" value="{{ ip.ipaddr }}"></td>
-              <td><a href="/mod_ip/?ip={{ ip.ipaddr }}">{{ ip.ipaddr }}</a></td>
+            	<!--选择IP，可多选-->
+              <td><input type="checkbox" class="checkbox" name="post_ip" value="{{ ip.ip }}"></td>
+              <!--查看对应IP主机的详细信息,将选择的主机IP传到后台-->
+              <td><a href="/mod_ip/?ip={{ ip.ip }}">{{ ip.ip }}</a></td>
               <td>{{ ip.hostname }}</td>
               <td>{{ ip.ostype }}</td>
-              <td>{{ ip.ports }}</td>
+              <td>{{ ip.port }}</td>
               <td>{{ ip.application }}</td>
             </tr>
             {% endfor %}
             <button type="submit" class="btn">删除</button>
           {%endif%}
-
         </form>
       </table>
 
@@ -63,13 +64,13 @@
     {% if paginator.page_range %}
     <ul class="pagination">
       {% if show_list.has_previous %}
-      <li><a href="?page={{ show_list.previous_page_number }}&search={{ s_text }}">&laquo;</a></li>
+      <li><a href="?page={{ show_list.previous_page_number }}&search={{ s_text }}">上一页</a></li>
       {% endif %}
       {% for i in paginator.page_range %}
       <li><a href="?page={{i}}&search={{ s_text }}" name="page">{{ i }}</a></li>
       {%endfor%}
       {% if show_list.has_next %}
-      <li><a href="?page={{ show_list.next_page_number }}&search={{ s_text }}">&raquo;</a></li>
+      <li><a href="?page={{ show_list.next_page_number }}&search={{ s_text }}">下一页</a></li>
       {% endif %}
     </ul>
     {% endif %}

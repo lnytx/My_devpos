@@ -1,32 +1,38 @@
 {% extends 'ip_manage.html' %}
 {% block showpage %}
 <form class="form-horizontal" role="form" method="post">
+<!--如果ip_info有数据，则显示-->
 {% if ip_info %}
+{% for ip in ip_info %}
+</table>
   <div class="control-group">
     <label class="control-label">IP地址</label>
     <div class="controls">
-      <p class="control-label">{{ip_info.ipaddr}}</p></div>
+      <p class="control-label">{{ip.ip}}</p></div>
   </div>
   <div class="control-group">
     <label class="control-label">主机名</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="hostname" value="{{ip_info.hostname}}"></div>
+      <input type="text" class="input-block-level" name="hostname" value="{{ip.hostname}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">系统类型</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="ostype" value="{{ip_info.ostype}}"></div>
+      <input type="text" class="input-block-level" name="ostype" value="{{ip.ostype}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">端口</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="ports" value="{{ip_info.ports}}"></div>
+      <input type="text" class="input-block-level" name="ports" value="{{ip.port}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">应用</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="application" value="{{ip_info.application}}"></div>
+      <input type="text" class="input-block-level" name="application" value="{{ip.application}}"></div>
   </div>
+  {%endfor%}
+  
+<!-- 如果ip_info没有数据，则变成提交，新增-->
 {% else %}
   <div class="control-group">
     <label class="control-label">IP地址</label>
@@ -53,8 +59,10 @@
     <div class="controls">
       <input type="text" class="input-block-level" name="application"></div>
   </div>
-{% endif %}
+  
 
+
+{% endif %}
   <div class="control-group">
     <div class="controls">
       <p>{{ add_error }}</p>
@@ -62,6 +70,16 @@
       <a class="btn" href="/ip_manage/">取消</a>
     </div>
   </div>
+<!--      <script>
+ $(function(){
+	$(".btn").click(function(){  
+		alert("123")
+		
+		var ip=$("input[name='ipaddr']").val();                //获取输入框中的ip  
+		alert(ip)
+		window.location.href = "http://127.0.0.1:8000/ip_manage/";  
+  		});  
+	});
+  </script>-->
 </form>
-
 {% endblock %}

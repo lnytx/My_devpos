@@ -24,7 +24,9 @@ from login import views as login_views
 urlpatterns = [
     url(r'^aaa/$',login_views.aaa),
     url(r'^admin/', admin.site.urls),
-    url(r'^base/', cmdb_views.base),
+    url(r'^base/', login_views.aaa),
+    url(r'^ajax_dict/', login_views.ajax_dict),
+    url(r'^ajax_list/', login_views.ajax_list),
     url(r'^$',login_views.index),
     url(r'^index/$',login_views.index),
     url(r'^login/$',login_views.login),

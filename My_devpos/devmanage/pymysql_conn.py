@@ -11,7 +11,9 @@ def connect():
                 'password':'root',
                 'port':3306,
                 'database':'my_devpos',
-                'charset':'utf8'
+                'charset':'utf8',
+                #要加上下面一行返回的是list，否则默认返回的是tuple
+                'cursorclass':pymysql.cursors.DictCursor,
             }
     try:
         conn=pymysql.connect(**config)
@@ -22,13 +24,15 @@ def connect():
         
         
 def select_table(table_name,ip):
-    sql_select='select ip from ' +table_name+' where ip =%s'
-    sql = 'select * from people_user'
-    sql = 'select * from auth_user where username = %s'
+    print("type(IP)",type(ip))
+    sql_select = "SELECT * FROM "+table_name+" WHERE `ip` =%s"
+    #sql_select = "select ip from host where ip ='127.0.0.1'"
+    #sql_select = 'select ip from ' + table_name
     try:
         conn=connect()
         cursor=conn.cursor()
-        cursor.execute(sql_select,'ip')
+        print("sql_select",sql_select)
+        cursor.execute(sql_select,(ip,))
         # 获取剩余结果的第一行数据
 #         row_1 = cursor.fetchone()
 #         
@@ -37,7 +41,7 @@ def select_table(table_name,ip):
          
         # 获取剩余结果所有数据
         row_3 = cursor.fetchall()
-        print (row_3)
+        print ("row_3",row_3)
         
         conn.commit()
 #         print ("row_1",row_1)
@@ -46,7 +50,7 @@ def select_table(table_name,ip):
         print ("row_3",len(row_3))
         return row_3 
     except Exception as e:
-        print("select cursor is faild".format(e))
+        print("select_table execute fails{}".format(e))
 
 
 def select_all(table_name):
@@ -55,12 +59,12 @@ def select_all(table_name):
         conn=connect()
         cursor=conn.cursor()
         cursor.execute(sql_select)
-        # 获取剩余结果所有数据
+        # 获取剩余结果所有数据,结果类型为list
         row_3 = cursor.fetchall()
         conn.commit()
         return row_3 
     except Exception as e:
-        print("select cursor is faild".format(e))
+        print("select_all execute fails{}".format(e))
         
 #插入hostname表
 def insert_table(table_name,data):
@@ -68,12 +72,18 @@ def insert_table(table_name,data):
             conn=connect()
             cursor = conn.cursor()
             #元组连接插入方式
-            sql_insert = "insert into python1(ip,hostname,ostype,application,pwd,username,port) \
-            values(%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql_insert, data)
-            conn.commit()
+            if table_name=='host':
+                sql_insert = "insert into `host` (ip,hostname,ostype,application,pwd,username,port) \
+                values(%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sql_insert, (data['ip'],data['hostname'],data['ostype'],data['application'],data['pwd'],data['username'],data['ports']))
+                conn.commit()
+            elif table_name=='device_status':
+                sql_insert = "insert into python1(ip,hostname,ostype,application,pwd,username,port) \
+                values(%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sql_insert, data)
+                conn.commit()               
         except Exception as e:
-            print("execute fails{}".format(e))
+            print("insert_table execute fails{}".format(e))
         finally:
             cursor.close()
             conn.close()
@@ -84,33 +94,39 @@ def delete_table(table_name,ip):
             conn=connect()
             cursor = conn.cursor()
             #元组连接插入方式
-            sql_delete = 'delete *from '+table_name+' where ip= %s'
-            cursor.execute(sql_delete, ip)
+            sql_delete = 'delete  from '+table_name+' where ip= %s'
+            cursor.execute(sql_delete,(ip,))
             conn.commit()
         except Exception as e:
-            print("execute fails{}".format(e))
+            print("delete_table execute fails{}".format(e))
         finally:
             cursor.close()
             conn.close()
             print("conn has chosed")
-def update_table(table_name,ip):
+def update_table(table_name,data):
         try:
             conn=connect()
             cursor = conn.cursor()
             #元组连接插入方式
-            sql_delete = 'update  '+table_name+'set hostname=%s,ostype=%s,applicaion=%s,port=%s where ip=%s'
-            +' where ip= %s'
-            cursor.execute(sql_delete, ip)
-            conn.commit()
+            if table_name=='host':
+                sql_update = "update "+table_name+" set `hostname`=%s,`ostype`=%s,`application`=%s,`port`=%s where `ip`=%s"
+                cursor.execute(sql_update, (data['hostname'],data['ostype'],data['application'],data['ports'],data['ip']))
+                conn.commit()
+            elif table_name=='device_status':
+                sql_update = "update "+table_name+" set `cpu`=%s,`memory`=%s,`location`=%s,`product`=%s,`platform`=%s,`sn`=%s where `ip`=%s"
+                cursor.execute(sql_update, (data['cpu'],data['memory'],data['location'],data['product'],data['platform'],data['sn'],data['ip']))
+                conn.commit()
         except Exception as e:
-            print("execute fails{}".format(e))
+            print("update_table execute fails{}".format(e))
         finally:
             cursor.close()
             conn.close()
             print("conn has chosed")
 
-if __name__=='__main__':
-    connect()
-    select_table('host','root')
+# if __name__=='__main__':
+#     connect()
+#     select_table('host','root')
+#     dev_list=select_all('device_status')
+#     print("dev_list",type(dev_list))
 
 

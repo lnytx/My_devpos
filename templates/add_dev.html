@@ -1,42 +1,44 @@
 {% extends 'ip_manage.html' %}
 {% block showpage %}
 <form class="form-horizontal" role="form" method="post">
-{% if ip_info %}
+{% if dev_info %}
+ {% for dev in dev_info %}
   <div class="control-group">
     <label class="control-label">IP地址</label>
     <div class="controls">
-      <p class="control-label">{{ip_info.ipaddr}}</p></div>
+      <p class="control-label">{{dev.ip}}</p></div>
   </div>
   <div class="control-group">
     <label class="control-label">CPU</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="cpu" value="{{ip_info.cpu}}"></div>
+      <input type="text" class="input-block-level" name="cpu" value="{{dev.cpu}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">内存容量</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="memory" value="{{ip_info.memory}}"></div>
+      <input type="text" class="input-block-level" name="memory" value="{{dev.memory}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">设备位置</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="location" value="{{ip_info.location}}"></div>
+      <input type="text" class="input-block-level" name="location" value="{{dev.location}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">服务器型号</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="product" value="{{ip_info.product}}"></div>
+      <input type="text" class="input-block-level" name="product" value="{{dev.product}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">系统类型</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="platform" value="{{ip_info.platform}}"></div>
+      <input type="text" class="input-block-level" name="platform" value="{{dev.platform}}"></div>
   </div>
   <div class="control-group">
     <label class="control-label">SN号</label>
     <div class="controls">
-      <input type="text" class="input-block-level" name="sn" value="{{ip_info.sn}}"></div>
+      <input type="text" class="input-block-level" name="sn" value="{{dev.sn}}"></div>
   </div>
+  {%endfor%}
 {% else %}
   <div class="control-group">
     <label class="control-label">IP地址</label>

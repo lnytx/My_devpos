@@ -1,17 +1,30 @@
 # -*- coding: utf-8 -*-
+import json
 from logging import root
 
-#直接无modles在Mysql数据库中生成Django默认的auth_user等表
-#采用了django的auth系统
 from django.contrib import auth
 from django.contrib.auth.models import User
+from django.contrib.messages.storage import session
 from django.http import HttpResponseRedirect
+from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 
 
+#直接无modles在Mysql数据库中生成Django默认的auth_user等表
+#采用了django的auth系统
 def aaa(request):
     return render_to_response('lianxi.html')
+
+def ajax_list(request):
+    a = [1,2,3,4,5,6]
+    return HttpResponse(json.dumps(a), content_type='application/json')
+ 
+def ajax_dict(request):
+    name_dict = {'twz': 'Love python and Django', 'zqxt': 'I am teaching Django'}
+    return HttpResponse(json.dumps(name_dict), content_type='application/json')
+
+
 
 # Create your views here.
 def index(request):
