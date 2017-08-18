@@ -77,8 +77,8 @@ def add_ip(request):
                 'ostype':request.POST.get('ostype'),
                 'ports':request.POST.get('ports'),
                 'application':request.POST.get('application'),
-                'pwd':request.POST.get('application','root'),
-                'username':request.POST.get('application','root'),
+                'pwd':request.POST.get('passwd','root'),
+                'username':request.POST.get('username','root'),
                 }
             print("data",data)
             insert_table('host', data)
@@ -112,17 +112,12 @@ def add_dev(request):
 def search_ip(request):
     '''search ip list'''
     if 'search' in request.GET and request.GET.get('search'):
-        s_text=request.GET.get('search')
+        s_text=request.GET.get('search').strip()
+        print("search",s_text)
         if len(s_text) != 0:
-            qset=(
-                Q(ipaddr__icontains = s_text)|
-                Q(hostname__icontains = s_text)|
-                Q(ostype__icontains = s_text)|
-                Q(ports__icontains = s_text)|
-                Q(application__icontains = s_text)
-                )
-            #还没有做冤魂
-            ip_list=select_table('host', 's_text')
+            #还没有做orm
+            ip_list=select_table('host', s_text)
+            print("ip_list",ip_list)
             if len(ip_list) == 0:
                 return render_to_response('ip_manage.html',{'username':request.user.username,'search_error':'查找内容不存在！'})
 
@@ -142,18 +137,9 @@ def search_ip(request):
 def search_dev(request):
     '''search dev list'''
     if 'search' in request.GET and request.GET.get('search'):
-        s_text=request.GET.get('search')
+        s_text=request.GET.get('search').strip()
         if len(s_text) != 0:
-            qset=(
-                Q(ipaddr__icontains = s_text)|
-                Q(cpu__icontains = s_text)|
-                Q(memory__icontains = s_text)|
-                Q(location__icontains = s_text)|
-                Q(product__icontains = s_text)|
-                Q(platform__icontains = s_text)|
-                Q(sn__icontains = s_text)
-                )
-            ip_list=select_table('device_status', 's_text')
+            ip_list=select_table('device_status', s_text)
             if len(ip_list) == 0:
                 return render_to_response('dev_manage.html',{'username':request.user.username,'search_error':'查找内容不存在！'})
 
@@ -184,7 +170,10 @@ def mod_ip(request):
             'ostype':request.POST.get('ostype'),
             'ports':request.POST.get('ports'),
             'application':request.POST.get('application'),
+            'username':request.POST.get('username'),
+            'pwd':request.POST.get('passwd'),
             }
+        print("data",data)
         update_table('host',data)
 
 

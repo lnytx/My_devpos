@@ -24,15 +24,17 @@ def connect():
         
         
 def select_table(table_name,ip):
-    print("type(IP)",type(ip))
-    sql_select = "SELECT * FROM "+table_name+" WHERE `ip` =%s"
+
     #sql_select = "select ip from host where ip ='127.0.0.1'"
     #sql_select = 'select ip from ' + table_name
     try:
         conn=connect()
         cursor=conn.cursor()
-        print("sql_select",sql_select)
-        cursor.execute(sql_select,(ip,))
+        if table_name=='host':
+            sql_select = "SELECT * FROM "+'`host`'+" WHERE `ip` = %s"
+        elif table_name=='device_status':
+            sql_select = "SELECT * FROM "+'`device_status`'+" WHERE `ip` = %s"
+        cursor.execute(sql_select,(ip))
         # 获取剩余结果的第一行数据
 #         row_1 = cursor.fetchone()
 #         
@@ -46,8 +48,6 @@ def select_table(table_name,ip):
         conn.commit()
 #         print ("row_1",row_1)
 #         print ("row_2",row_2)
-        print ("row_3",row_3)
-        print ("row_3",len(row_3))
         return row_3 
     except Exception as e:
         print("select_table execute fails{}".format(e))
@@ -74,7 +74,7 @@ def insert_table(table_name,data):
             #元组连接插入方式
             if table_name=='host':
                 sql_insert = "insert into `host` (ip,hostname,ostype,application,pwd,username,port) \
-                values(%s,%s,%s,%s,%s,%s,%s)"
+                values(%s,%s,%s,%s,md5(%s),%s,%s)"
                 cursor.execute(sql_insert, (data['ip'],data['hostname'],data['ostype'],data['application'],data['pwd'],data['username'],data['ports']))
                 conn.commit()
             elif table_name=='device_status':
@@ -107,10 +107,10 @@ def update_table(table_name,data):
         try:
             conn=connect()
             cursor = conn.cursor()
-            #元组连接插入方式
+            #元组连接插入方式md5对密码进行加密
             if table_name=='host':
-                sql_update = "update "+table_name+" set `hostname`=%s,`ostype`=%s,`application`=%s,`port`=%s where `ip`=%s"
-                cursor.execute(sql_update, (data['hostname'],data['ostype'],data['application'],data['ports'],data['ip']))
+                sql_update = "update "+table_name+" set `hostname`=%s,`ostype`=%s,`application`=%s,`port`=%s,`username`=%s,`pwd`=md5(%s) where `ip`=%s"
+                cursor.execute(sql_update, (data['hostname'],data['ostype'],data['application'],data['ports'],data['username'],data['pwd'],data['ip']))
                 conn.commit()
             elif table_name=='device_status':
                 sql_update = "update "+table_name+" set `cpu`=%s,`memory`=%s,`location`=%s,`product`=%s,`platform`=%s,`sn`=%s where `ip`=%s"

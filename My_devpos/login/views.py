@@ -5,12 +5,14 @@ from logging import root
 from django.contrib import auth
 from django.contrib.auth.models import User
 from django.contrib.messages.storage import session
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage, \
+    InvalidPage
 from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import render_to_response
 
-
+each_page=2
 #直接无modles在Mysql数据库中生成Django默认的auth_user等表
 #采用了django的auth系统
 def aaa(request):

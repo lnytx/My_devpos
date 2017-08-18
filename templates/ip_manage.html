@@ -39,6 +39,8 @@
         <th>系统类型</th>
         <th>开放端口</th>
         <th>应用</th>
+        <th>用户名</th>
+        <th>密码</th>
         <tr>{{search_error}}</tr>
         <form class="form-horizontal" role="form" method="post">
         <!--show ip list-->
@@ -53,6 +55,8 @@
               <td>{{ ip.ostype }}</td>
               <td>{{ ip.port }}</td>
               <td>{{ ip.application }}</td>
+              <td>{{ ip.username }}</td>
+              <td>{{ ip.pwd }}</td>
             </tr>
             {% endfor %}
             <button type="submit" class="btn">删除</button>
